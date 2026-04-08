@@ -1,0 +1,221 @@
+
+<div style="padding:0.75rem 0;">
+
+<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem;">
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;">
+    <p style="font-size:11px;color:var(--color-text-secondary);margin:0 0 4px;text-transform:uppercase;letter-spacing:.04em;">Totaal 2026</p>
+    <p style="font-size:20px;font-weight:500;margin:0;">€329.594</p>
+    <p style="font-size:11px;color:#3B6D11;margin:4px 0 0;">▼ 6,3% vs 2025</p>
+  </div>
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;">
+    <p style="font-size:11px;color:var(--color-text-secondary);margin:0 0 4px;text-transform:uppercase;letter-spacing:.04em;">Gemiddeld / jaar</p>
+    <p style="font-size:20px;font-weight:500;margin:0;">€323.892</p>
+    <p style="font-size:11px;color:var(--color-text-secondary);margin:4px 0 0;">2022 – 2026</p>
+  </div>
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;">
+    <p style="font-size:11px;color:var(--color-text-secondary);margin:0 0 4px;text-transform:uppercase;letter-spacing:.04em;">Grootste post</p>
+    <p style="font-size:20px;font-weight:500;margin:0;">Gas</p>
+    <p style="font-size:11px;color:var(--color-text-secondary);margin:4px 0 0;">€93.645 · 28% van totaal</p>
+  </div>
+  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;">
+    <p style="font-size:11px;color:var(--color-text-secondary);margin:0 0 4px;text-transform:uppercase;letter-spacing:.04em;">Sterkste stijger</p>
+    <p style="font-size:20px;font-weight:500;margin:0;">Water</p>
+    <p style="font-size:11px;color:#A32D2D;margin:4px 0 0;">▲ +66% over 5 jaar</p>
+  </div>
+</div>
+
+<div style="display:flex;gap:0;margin-bottom:1.25rem;border-bottom:0.5px solid var(--color-border-tertiary);">
+  <button id="tab-trends" onclick="showTab('trends')" style="padding:8px 16px;font-size:13px;border:none;border-bottom:2px solid var(--color-text-primary);background:none;cursor:pointer;color:var(--color-text-primary);margin-bottom:-1px;">Trends</button>
+  <button id="tab-verdeling" onclick="showTab('verdeling')" style="padding:8px 16px;font-size:13px;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;color:var(--color-text-secondary);margin-bottom:-1px;">Kostenverdeling</button>
+  <button id="tab-vergelijking" onclick="showTab('vergelijking')" style="padding:8px 16px;font-size:13px;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;color:var(--color-text-secondary);margin-bottom:-1px;">Jaar-op-jaar</button>
+  <button id="tab-volatiliteit" onclick="showTab('volatiliteit')" style="padding:8px 16px;font-size:13px;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;color:var(--color-text-secondary);margin-bottom:-1px;">Volatiliteit</button>
+</div>
+
+<div id="pane-trends">
+  <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 12px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">Lijndiagram van de totale kosten en de 3 grootste posten (Gas, Water, Liften) over alle jaren. Zo zie je welke kostenposten structureel stijgen of dalen en hoe het totaalbudget evolueert.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px 16px;margin-bottom:10px;font-size:12px;color:var(--color-text-secondary);">
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD"></span>Totaal</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#D85A30"></span>Gas</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75"></span>Water</span>
+    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#BA7517"></span>Liften</span>
+  </div>
+  <div style="position:relative;width:100%;height:300px;"><canvas id="chartTrends"></canvas></div>
+</div>
+
+<div id="pane-verdeling" style="display:none;">
+  <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 12px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">Donutgrafiek van de kostenverdeling per jaar. Selecteer een jaar om te zien hoe het budget verdeeld was — handig om te vergelijken of de mix verschuift (bv. meer Liften, minder Gas in 2025).</p>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <span style="font-size:13px;color:var(--color-text-secondary);">Jaar:</span>
+    <div id="yearBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+  </div>
+  <div style="position:relative;width:100%;height:300px;"><canvas id="chartVerdeling"></canvas></div>
+  <div id="legendVerdeling" style="display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px;font-size:12px;"></div>
+</div>
+
+<div id="pane-vergelijking" style="display:none;">
+  <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 12px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">Vergelijk twee opeenvolgende jaren per kostenpost. De blauwe balk is het oudere jaar, de donkerblauwe het nieuwere. Zo zie je meteen welke posten stijgen of dalen van jaar tot jaar.</p>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <span style="font-size:13px;color:var(--color-text-secondary);">Periode:</span>
+    <div id="perioBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+  </div>
+  <div style="display:flex;gap:12px;margin-bottom:8px;font-size:12px;color:var(--color-text-secondary);" id="vergLegend"></div>
+  <div id="vergChartWrap" style="position:relative;width:100%;"><canvas id="chartVergelijking"></canvas></div>
+</div>
+
+<div id="pane-volatiliteit" style="display:none;">
+  <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 16px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">Variatiecoëfficiënt (standaarddeviatie ÷ gemiddelde) per kostenpost. Hoe hoger het percentage, hoe onvoorspelbaarder de kost — nuttig om te bepalen welke posten een grotere buffer in het reservefonds verdienen.</p>
+  <div id="volatilityList"></div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const years=[2022,2023,2024,2025,2026];
+const cats=[
+  {name:'Gas',            values:[133354.97,82770.03,96640.23,89185.34,93644.61],color:'#D85A30'},
+  {name:'Water',          values:[39835.03,43489.82,47205.52,63045.66,66197.94], color:'#378ADD'},
+  {name:'Liften',         values:[20359.05,21421.80,19723.08,37360.84,39228.88], color:'#BA7517'},
+  {name:'Financiële kosten',values:[32642.82,33112.69,33801.28,21108.85,22164.29],color:'#7F77DD'},
+  {name:'Erelonen',       values:[23754.05,28899.30,32016.96,34313.67,36029.35], color:'#1D9E75'},
+  {name:'Elektriciteit',  values:[28580.68,16609.90,14096.24,14259.00,14971.95], color:'#639922'},
+  {name:'Sanitair & verwarming',values:[25871.38,38291.47,13867.07,19607.29,17429.22],color:'#D4537E'},
+  {name:'Verzekeringen',  values:[14182.95,13227.32,18834.96,19060.04,20013.04], color:'#888780'},
+  {name:'Renovatiewerken',values:[0,0,1128.90,31903.41,0],                       color:'#F09595'},
+  {name:'Tuinen & parkings',values:[4573.98,5086.14,9090.04,5371.92,5640.52],    color:'#5DCAA5'},
+  {name:'Diversen',       values:[2135.12,2879.28,6249.33,6420.61,6741.64],      color:'#AFA9EC'},
+  {name:'Brandbeveiliging',values:[3604.00,4659.72,4379.47,4969.45,5217.92],     color:'#FAC775'},
+  {name:'Onderhoud bouwwerken',values:[664.10,4662.50,10126.44,0,0],             color:'#B4B2A9'},
+  {name:'El. installaties',values:[300.83,497.56,2850.68,3806.03,1413.11],       color:'#9FE1CB'},
+  {name:'Schoonmaak',     values:[1016.00,873.47,802.68,858.97,901.92],          color:'#C0DD97'},
+  {name:'Schrijnwerken',  values:[0,0,0,427.08,0],                               color:'#F5C4B3'}
+];
+const totals=[330874.96,296481.00,310812.88,351698.16,329594.40];
+const periods=['2022→2023','2023→2024','2024→2025','2025→2026'];
+
+function avg(arr){const v=arr.filter(x=>x>0);return v.length?v.reduce((a,b)=>a+b,0)/v.length:0;}
+function std(arr){const a=avg(arr);const v=arr.filter(x=>x>0);if(v.length<2)return 0;return Math.sqrt(v.reduce((s,x)=>s+Math.pow(x-a,2),0)/v.length);}
+function fmt(v){return '€'+Math.round(v).toLocaleString('nl-BE');}
+
+const inited={};
+let vergChart=null,verdelingChart=null,activeYear=0,activePeriod=0;
+
+function showTab(name){
+  ['trends','verdeling','vergelijking','volatiliteit'].forEach(t=>{
+    document.getElementById('pane-'+t).style.display=t===name?'block':'none';
+    const btn=document.getElementById('tab-'+t);
+    btn.style.color=t===name?'var(--color-text-primary)':'var(--color-text-secondary)';
+    btn.style.borderBottom=t===name?'2px solid var(--color-text-primary)':'2px solid transparent';
+  });
+  if(!inited[name]){buildChart(name);inited[name]=true;}
+}
+
+function buildChart(name){
+  if(name==='trends'){
+    new Chart(document.getElementById('chartTrends'),{
+      type:'line',
+      data:{labels:years,datasets:[
+        {label:'Totaal',data:totals,borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,0.08)',tension:0.35,fill:true,borderWidth:2.5,pointRadius:4},
+        {label:'Gas',data:cats[0].values,borderColor:'#D85A30',backgroundColor:'transparent',tension:0.35,borderWidth:2,pointRadius:3},
+        {label:'Water',data:cats[1].values,borderColor:'#1D9E75',backgroundColor:'transparent',tension:0.35,borderWidth:2,pointRadius:3},
+        {label:'Liften',data:cats[2].values,borderColor:'#BA7517',backgroundColor:'transparent',tension:0.35,borderWidth:2,pointRadius:3}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},
+        scales:{y:{ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'k'},grid:{color:'rgba(128,128,128,0.1)'}},x:{grid:{display:false}}}}
+    });
+  } else if(name==='verdeling'){
+    const btns=document.getElementById('yearBtns');
+    years.forEach((y,i)=>{
+      const b=document.createElement('button');
+      b.textContent=y;
+      b.style.cssText='padding:5px 12px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:'+(i===0?'var(--color-text-primary)':'none')+';color:'+(i===0?'var(--color-background-primary)':'var(--color-text-secondary)')+';cursor:pointer;';
+      b.onclick=()=>updateVerdeling(i);
+      btns.appendChild(b);
+    });
+    buildVerdelingChart(0);
+  } else if(name==='vergelijking'){
+    const btns=document.getElementById('perioBtns');
+    periods.forEach((p,i)=>{
+      const b=document.createElement('button');
+      b.textContent=p;
+      b.style.cssText='padding:5px 12px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:'+(i===0?'var(--color-text-primary)':'none')+';color:'+(i===0?'var(--color-background-primary)':'var(--color-text-secondary)')+';cursor:pointer;';
+      b.onclick=()=>updateVergelijking(i);
+      btns.appendChild(b);
+    });
+    buildVergChart(0);
+  } else if(name==='volatiliteit'){
+    const volData=cats.map(c=>{const a=avg(c.values);const s=std(c.values);return{name:c.name,cv:a>0?Math.round(s/a*100):0,avg:Math.round(a),color:c.color};}).filter(c=>c.avg>300).sort((a,b)=>b.cv-a.cv);
+    const maxCv=volData[0].cv;
+    const el=document.getElementById('volatilityList');
+    volData.forEach(c=>{
+      const bw=Math.round(c.cv/maxCv*100);
+      const barColor=c.cv>60?'#E24B4A':c.cv>30?'#BA7517':'#1D9E75';
+      el.innerHTML+=`<div style="margin-bottom:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;"><span style="color:var(--color-text-primary);font-weight:500">${c.name}</span><span style="color:var(--color-text-secondary)">CV: ${c.cv}%&nbsp;&nbsp;gem. ${fmt(c.avg)}</span></div><div style="background:var(--color-background-secondary);border-radius:4px;height:7px;"><div style="width:${bw}%;background:${barColor};height:7px;border-radius:4px;"></div></div></div>`;
+    });
+  }
+}
+
+function buildVerdelingChart(yi){
+  activeYear=yi;
+  const total=cats.reduce((s,c)=>s+c.values[yi],0);
+  const sorted=[...cats].sort((a,b)=>b.values[yi]-a.values[yi]);
+  const top8=sorted.slice(0,8);
+  const otherV=sorted.slice(8).reduce((s,c)=>s+c.values[yi],0);
+  const labels=[...top8.map(c=>c.name),'Overige'];
+  const data=[...top8.map(c=>Math.round(c.values[yi])),Math.round(otherV)];
+  const colors=[...top8.map(c=>c.color),'#B4B2A9'];
+  if(verdelingChart){verdelingChart.destroy();}
+  verdelingChart=new Chart(document.getElementById('chartVerdeling'),{
+    type:'doughnut',
+    data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:1,hoverOffset:6}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.label+': '+fmt(ctx.raw)+' ('+Math.round(ctx.raw/total*100)+'%)'}}}}
+  });
+  const leg=document.getElementById('legendVerdeling');
+  leg.innerHTML='';
+  labels.forEach((l,i)=>{
+    const pct=Math.round(data[i]/total*100);
+    leg.innerHTML+=`<span style="display:flex;align-items:center;gap:4px;color:var(--color-text-secondary)"><span style="width:10px;height:10px;border-radius:2px;background:${colors[i]};flex-shrink:0"></span>${l} ${pct}%</span>`;
+  });
+}
+
+function updateVerdeling(i){
+  document.querySelectorAll('#yearBtns button').forEach((b,j)=>{
+    b.style.background=j===i?'var(--color-text-primary)':'none';
+    b.style.color=j===i?'var(--color-background-primary)':'var(--color-text-secondary)';
+  });
+  buildVerdelingChart(i);
+}
+
+function buildVergChart(pi){
+  activePeriod=pi;
+  const iA=pi,iB=pi+1;
+  const yA=years[iA],yB=years[iB];
+  const filtered=cats.filter(c=>c.values[iA]>0||c.values[iB]>0).sort((a,b)=>(b.values[iA]+b.values[iB])-(a.values[iA]+a.values[iB]));
+  const nBars=filtered.length;
+  const wrapH=Math.max(400,nBars*52+80);
+  document.getElementById('vergChartWrap').style.height=wrapH+'px';
+  document.getElementById('vergLegend').innerHTML=`<span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#B5D4F4"></span>${yA}</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#185FA5"></span>${yB}</span>`;
+  if(vergChart){vergChart.destroy();}
+  vergChart=new Chart(document.getElementById('chartVergelijking'),{
+    type:'bar',
+    data:{labels:filtered.map(c=>c.name),datasets:[
+      {label:''+yA,data:filtered.map(c=>Math.round(c.values[iA])),backgroundColor:'#B5D4F4',borderWidth:0,borderRadius:3},
+      {label:''+yB,data:filtered.map(c=>Math.round(c.values[iB])),backgroundColor:'#185FA5',borderWidth:0,borderRadius:3}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const diff=filtered[ctx.dataIndex].values[iB]-filtered[ctx.dataIndex].values[iA];const pct=filtered[ctx.dataIndex].values[iA]>0?((diff/filtered[ctx.dataIndex].values[iA])*100).toFixed(1):'n.v.t.';return ctx.dataset.label+': '+fmt(ctx.raw)+(ctx.datasetIndex===1?' ('+( diff>=0?'+':'')+pct+'%)':'');}}}},
+      scales:{x:{ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'k'},grid:{color:'rgba(128,128,128,0.1)'}},y:{ticks:{font:{size:11}},grid:{display:false}}}
+    }
+  });
+}
+
+function updateVergelijking(i){
+  document.querySelectorAll('#perioBtns button').forEach((b,j)=>{
+    b.style.background=j===i?'var(--color-text-primary)':'none';
+    b.style.color=j===i?'var(--color-background-primary)':'var(--color-text-secondary)';
+  });
+  buildVergChart(i);
+}
+
+buildChart('trends');inited['trends']=true;
+</script>
