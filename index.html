@@ -1,221 +1,436 @@
-
-<div style="padding:0.75rem 0;">
-
-<div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:1.5rem;">
-  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;">
-    <p style="font-size:11px;color:var(--color-text-secondary);margin:0 0 4px;text-transform:uppercase;letter-spacing:.04em;">Totaal 2026</p>
-    <p style="font-size:20px;font-weight:500;margin:0;">€329.594</p>
-    <p style="font-size:11px;color:#3B6D11;margin:4px 0 0;">▼ 6,3% vs 2025</p>
-  </div>
-  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;">
-    <p style="font-size:11px;color:var(--color-text-secondary);margin:0 0 4px;text-transform:uppercase;letter-spacing:.04em;">Gemiddeld / jaar</p>
-    <p style="font-size:20px;font-weight:500;margin:0;">€323.892</p>
-    <p style="font-size:11px;color:var(--color-text-secondary);margin:4px 0 0;">2022 – 2026</p>
-  </div>
-  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;">
-    <p style="font-size:11px;color:var(--color-text-secondary);margin:0 0 4px;text-transform:uppercase;letter-spacing:.04em;">Grootste post</p>
-    <p style="font-size:20px;font-weight:500;margin:0;">Gas</p>
-    <p style="font-size:11px;color:var(--color-text-secondary);margin:4px 0 0;">€93.645 · 28% van totaal</p>
-  </div>
-  <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;">
-    <p style="font-size:11px;color:var(--color-text-secondary);margin:0 0 4px;text-transform:uppercase;letter-spacing:.04em;">Sterkste stijger</p>
-    <p style="font-size:20px;font-weight:500;margin:0;">Water</p>
-    <p style="font-size:11px;color:#A32D2D;margin:4px 0 0;">▲ +66% over 5 jaar</p>
-  </div>
-</div>
-
-<div style="display:flex;gap:0;margin-bottom:1.25rem;border-bottom:0.5px solid var(--color-border-tertiary);">
-  <button id="tab-trends" onclick="showTab('trends')" style="padding:8px 16px;font-size:13px;border:none;border-bottom:2px solid var(--color-text-primary);background:none;cursor:pointer;color:var(--color-text-primary);margin-bottom:-1px;">Trends</button>
-  <button id="tab-verdeling" onclick="showTab('verdeling')" style="padding:8px 16px;font-size:13px;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;color:var(--color-text-secondary);margin-bottom:-1px;">Kostenverdeling</button>
-  <button id="tab-vergelijking" onclick="showTab('vergelijking')" style="padding:8px 16px;font-size:13px;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;color:var(--color-text-secondary);margin-bottom:-1px;">Jaar-op-jaar</button>
-  <button id="tab-volatiliteit" onclick="showTab('volatiliteit')" style="padding:8px 16px;font-size:13px;border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;color:var(--color-text-secondary);margin-bottom:-1px;">Volatiliteit</button>
-</div>
-
-<div id="pane-trends">
-  <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 12px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">Lijndiagram van de totale kosten en de 3 grootste posten (Gas, Water, Liften) over alle jaren. Zo zie je welke kostenposten structureel stijgen of dalen en hoe het totaalbudget evolueert.</p>
-  <div style="display:flex;flex-wrap:wrap;gap:8px 16px;margin-bottom:10px;font-size:12px;color:var(--color-text-secondary);">
-    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#378ADD"></span>Totaal</span>
-    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#D85A30"></span>Gas</span>
-    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#1D9E75"></span>Water</span>
-    <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#BA7517"></span>Liften</span>
-  </div>
-  <div style="position:relative;width:100%;height:300px;"><canvas id="chartTrends"></canvas></div>
-</div>
-
-<div id="pane-verdeling" style="display:none;">
-  <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 12px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">Donutgrafiek van de kostenverdeling per jaar. Selecteer een jaar om te zien hoe het budget verdeeld was — handig om te vergelijken of de mix verschuift (bv. meer Liften, minder Gas in 2025).</p>
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
-    <span style="font-size:13px;color:var(--color-text-secondary);">Jaar:</span>
-    <div id="yearBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
-  </div>
-  <div style="position:relative;width:100%;height:300px;"><canvas id="chartVerdeling"></canvas></div>
-  <div id="legendVerdeling" style="display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:12px;font-size:12px;"></div>
-</div>
-
-<div id="pane-vergelijking" style="display:none;">
-  <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 12px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">Vergelijk twee opeenvolgende jaren per kostenpost. De blauwe balk is het oudere jaar, de donkerblauwe het nieuwere. Zo zie je meteen welke posten stijgen of dalen van jaar tot jaar.</p>
-  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
-    <span style="font-size:13px;color:var(--color-text-secondary);">Periode:</span>
-    <div id="perioBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
-  </div>
-  <div style="display:flex;gap:12px;margin-bottom:8px;font-size:12px;color:var(--color-text-secondary);" id="vergLegend"></div>
-  <div id="vergChartWrap" style="position:relative;width:100%;"><canvas id="chartVergelijking"></canvas></div>
-</div>
-
-<div id="pane-volatiliteit" style="display:none;">
-  <p style="font-size:12px;color:var(--color-text-secondary);margin:0 0 16px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);">Variatiecoëfficiënt (standaarddeviatie ÷ gemiddelde) per kostenpost. Hoe hoger het percentage, hoe onvoorspelbaarder de kost — nuttig om te bepalen welke posten een grotere buffer in het reservefonds verdienen.</p>
-  <div id="volatilityList"></div>
-</div>
-
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script>
-const years=[2022,2023,2024,2025,2026];
-const cats=[
-  {name:'Gas',            values:[133354.97,82770.03,96640.23,89185.34,93644.61],color:'#D85A30'},
-  {name:'Water',          values:[39835.03,43489.82,47205.52,63045.66,66197.94], color:'#378ADD'},
-  {name:'Liften',         values:[20359.05,21421.80,19723.08,37360.84,39228.88], color:'#BA7517'},
-  {name:'Financiële kosten',values:[32642.82,33112.69,33801.28,21108.85,22164.29],color:'#7F77DD'},
-  {name:'Erelonen',       values:[23754.05,28899.30,32016.96,34313.67,36029.35], color:'#1D9E75'},
-  {name:'Elektriciteit',  values:[28580.68,16609.90,14096.24,14259.00,14971.95], color:'#639922'},
-  {name:'Sanitair & verwarming',values:[25871.38,38291.47,13867.07,19607.29,17429.22],color:'#D4537E'},
-  {name:'Verzekeringen',  values:[14182.95,13227.32,18834.96,19060.04,20013.04], color:'#888780'},
-  {name:'Renovatiewerken',values:[0,0,1128.90,31903.41,0],                       color:'#F09595'},
-  {name:'Tuinen & parkings',values:[4573.98,5086.14,9090.04,5371.92,5640.52],    color:'#5DCAA5'},
-  {name:'Diversen',       values:[2135.12,2879.28,6249.33,6420.61,6741.64],      color:'#AFA9EC'},
-  {name:'Brandbeveiliging',values:[3604.00,4659.72,4379.47,4969.45,5217.92],     color:'#FAC775'},
-  {name:'Onderhoud bouwwerken',values:[664.10,4662.50,10126.44,0,0],             color:'#B4B2A9'},
-  {name:'El. installaties',values:[300.83,497.56,2850.68,3806.03,1413.11],       color:'#9FE1CB'},
-  {name:'Schoonmaak',     values:[1016.00,873.47,802.68,858.97,901.92],          color:'#C0DD97'},
-  {name:'Schrijnwerken',  values:[0,0,0,427.08,0],                               color:'#F5C4B3'}
-];
-const totals=[330874.96,296481.00,310812.88,351698.16,329594.40];
-const periods=['2022→2023','2023→2024','2024→2025','2025→2026'];
-
-function avg(arr){const v=arr.filter(x=>x>0);return v.length?v.reduce((a,b)=>a+b,0)/v.length:0;}
-function std(arr){const a=avg(arr);const v=arr.filter(x=>x>0);if(v.length<2)return 0;return Math.sqrt(v.reduce((s,x)=>s+Math.pow(x-a,2),0)/v.length);}
-function fmt(v){return '€'+Math.round(v).toLocaleString('nl-BE');}
-
-const inited={};
-let vergChart=null,verdelingChart=null,activeYear=0,activePeriod=0;
-
-function showTab(name){
-  ['trends','verdeling','vergelijking','volatiliteit'].forEach(t=>{
-    document.getElementById('pane-'+t).style.display=t===name?'block':'none';
-    const btn=document.getElementById('tab-'+t);
-    btn.style.color=t===name?'var(--color-text-primary)':'var(--color-text-secondary)';
-    btn.style.borderBottom=t===name?'2px solid var(--color-text-primary)':'2px solid transparent';
-  });
-  if(!inited[name]){buildChart(name);inited[name]=true;}
-}
-
-function buildChart(name){
-  if(name==='trends'){
-    new Chart(document.getElementById('chartTrends'),{
-      type:'line',
-      data:{labels:years,datasets:[
-        {label:'Totaal',data:totals,borderColor:'#378ADD',backgroundColor:'rgba(55,138,221,0.08)',tension:0.35,fill:true,borderWidth:2.5,pointRadius:4},
-        {label:'Gas',data:cats[0].values,borderColor:'#D85A30',backgroundColor:'transparent',tension:0.35,borderWidth:2,pointRadius:3},
-        {label:'Water',data:cats[1].values,borderColor:'#1D9E75',backgroundColor:'transparent',tension:0.35,borderWidth:2,pointRadius:3},
-        {label:'Liften',data:cats[2].values,borderColor:'#BA7517',backgroundColor:'transparent',tension:0.35,borderWidth:2,pointRadius:3}
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.dataset.label+': '+fmt(ctx.raw)}}},
-        scales:{y:{ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'k'},grid:{color:'rgba(128,128,128,0.1)'}},x:{grid:{display:false}}}}
-    });
-  } else if(name==='verdeling'){
-    const btns=document.getElementById('yearBtns');
-    years.forEach((y,i)=>{
-      const b=document.createElement('button');
-      b.textContent=y;
-      b.style.cssText='padding:5px 12px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:'+(i===0?'var(--color-text-primary)':'none')+';color:'+(i===0?'var(--color-background-primary)':'var(--color-text-secondary)')+';cursor:pointer;';
-      b.onclick=()=>updateVerdeling(i);
-      btns.appendChild(b);
-    });
-    buildVerdelingChart(0);
-  } else if(name==='vergelijking'){
-    const btns=document.getElementById('perioBtns');
-    periods.forEach((p,i)=>{
-      const b=document.createElement('button');
-      b.textContent=p;
-      b.style.cssText='padding:5px 12px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:'+(i===0?'var(--color-text-primary)':'none')+';color:'+(i===0?'var(--color-background-primary)':'var(--color-text-secondary)')+';cursor:pointer;';
-      b.onclick=()=>updateVergelijking(i);
-      btns.appendChild(b);
-    });
-    buildVergChart(0);
-  } else if(name==='volatiliteit'){
-    const volData=cats.map(c=>{const a=avg(c.values);const s=std(c.values);return{name:c.name,cv:a>0?Math.round(s/a*100):0,avg:Math.round(a),color:c.color};}).filter(c=>c.avg>300).sort((a,b)=>b.cv-a.cv);
-    const maxCv=volData[0].cv;
-    const el=document.getElementById('volatilityList');
-    volData.forEach(c=>{
-      const bw=Math.round(c.cv/maxCv*100);
-      const barColor=c.cv>60?'#E24B4A':c.cv>30?'#BA7517':'#1D9E75';
-      el.innerHTML+=`<div style="margin-bottom:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px;"><span style="color:var(--color-text-primary);font-weight:500">${c.name}</span><span style="color:var(--color-text-secondary)">CV: ${c.cv}%&nbsp;&nbsp;gem. ${fmt(c.avg)}</span></div><div style="background:var(--color-background-secondary);border-radius:4px;height:7px;"><div style="width:${bw}%;background:${barColor};height:7px;border-radius:4px;"></div></div></div>`;
-    });
-  }
-}
-
-function buildVerdelingChart(yi){
-  activeYear=yi;
-  const total=cats.reduce((s,c)=>s+c.values[yi],0);
-  const sorted=[...cats].sort((a,b)=>b.values[yi]-a.values[yi]);
-  const top8=sorted.slice(0,8);
-  const otherV=sorted.slice(8).reduce((s,c)=>s+c.values[yi],0);
-  const labels=[...top8.map(c=>c.name),'Overige'];
-  const data=[...top8.map(c=>Math.round(c.values[yi])),Math.round(otherV)];
-  const colors=[...top8.map(c=>c.color),'#B4B2A9'];
-  if(verdelingChart){verdelingChart.destroy();}
-  verdelingChart=new Chart(document.getElementById('chartVerdeling'),{
-    type:'doughnut',
-    data:{labels,datasets:[{data,backgroundColor:colors,borderWidth:1,hoverOffset:6}]},
-    options:{responsive:true,maintainAspectRatio:false,cutout:'60%',plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>ctx.label+': '+fmt(ctx.raw)+' ('+Math.round(ctx.raw/total*100)+'%)'}}}}
-  });
-  const leg=document.getElementById('legendVerdeling');
-  leg.innerHTML='';
-  labels.forEach((l,i)=>{
-    const pct=Math.round(data[i]/total*100);
-    leg.innerHTML+=`<span style="display:flex;align-items:center;gap:4px;color:var(--color-text-secondary)"><span style="width:10px;height:10px;border-radius:2px;background:${colors[i]};flex-shrink:0"></span>${l} ${pct}%</span>`;
-  });
-}
-
-function updateVerdeling(i){
-  document.querySelectorAll('#yearBtns button').forEach((b,j)=>{
-    b.style.background=j===i?'var(--color-text-primary)':'none';
-    b.style.color=j===i?'var(--color-background-primary)':'var(--color-text-secondary)';
-  });
-  buildVerdelingChart(i);
-}
-
-function buildVergChart(pi){
-  activePeriod=pi;
-  const iA=pi,iB=pi+1;
-  const yA=years[iA],yB=years[iB];
-  const filtered=cats.filter(c=>c.values[iA]>0||c.values[iB]>0).sort((a,b)=>(b.values[iA]+b.values[iB])-(a.values[iA]+a.values[iB]));
-  const nBars=filtered.length;
-  const wrapH=Math.max(400,nBars*52+80);
-  document.getElementById('vergChartWrap').style.height=wrapH+'px';
-  document.getElementById('vergLegend').innerHTML=`<span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#B5D4F4"></span>${yA}</span><span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#185FA5"></span>${yB}</span>`;
-  if(vergChart){vergChart.destroy();}
-  vergChart=new Chart(document.getElementById('chartVergelijking'),{
-    type:'bar',
-    data:{labels:filtered.map(c=>c.name),datasets:[
-      {label:''+yA,data:filtered.map(c=>Math.round(c.values[iA])),backgroundColor:'#B5D4F4',borderWidth:0,borderRadius:3},
-      {label:''+yB,data:filtered.map(c=>Math.round(c.values[iB])),backgroundColor:'#185FA5',borderWidth:0,borderRadius:3}
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
-      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const diff=filtered[ctx.dataIndex].values[iB]-filtered[ctx.dataIndex].values[iA];const pct=filtered[ctx.dataIndex].values[iA]>0?((diff/filtered[ctx.dataIndex].values[iA])*100).toFixed(1):'n.v.t.';return ctx.dataset.label+': '+fmt(ctx.raw)+(ctx.datasetIndex===1?' ('+( diff>=0?'+':'')+pct+'%)':'');}}}},
-      scales:{x:{ticks:{callback:v=>'€'+(v/1000).toFixed(0)+'k'},grid:{color:'rgba(128,128,128,0.1)'}},y:{ticks:{font:{size:11}},grid:{display:false}}}
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kostendashboard — August Vermeylenlaan 5/7</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --navy:#0B1D35;--navy2:#112240;--navy3:#1E3A5F;
+      --amber:#D97706;--amber2:#F59E0B;
+      --green:#059669;--red:#DC2626;--blue:#2563EB;
+      --slate:#64748B;--light:#F1F5F9;--white:#FFFFFF;
+      --border:#CBD5E1;--text:#1E293B;--muted:#64748B;
+      --card-shadow:0 2px 12px rgba(11,29,53,.07);
     }
-  });
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--light);color:var(--text);min-height:100vh;}
+    .page-header{background:var(--navy);color:#fff;padding:26px 48px;display:flex;justify-content:space-between;align-items:flex-end;gap:32px;border-bottom:3px solid var(--amber);}
+    .header-left h1{font-family:Georgia,serif;font-size:26px;font-weight:700;line-height:1.15;}
+    .header-left .subtitle{margin-top:5px;font-size:13px;font-weight:300;color:rgba(255,255,255,.65);letter-spacing:.4px;}
+    .header-right{text-align:right;font-size:12px;color:rgba(255,255,255,.55);line-height:1.7;}
+    .header-right strong{color:rgba(255,255,255,.85);}
+    .badge-period{display:inline-block;background:var(--amber);color:#fff;font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;padding:3px 9px;border-radius:3px;margin-bottom:6px;}
+    .tab-nav{background:var(--navy2);padding:0 48px;display:flex;gap:4px;border-bottom:1px solid rgba(255,255,255,.08);}
+    .tab-btn{padding:14px 24px;font-size:13px;font-weight:600;color:rgba(255,255,255,.5);background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;letter-spacing:.3px;transition:color .15s,border-color .15s;display:flex;align-items:center;gap:8px;}
+    .tab-btn:hover{color:rgba(255,255,255,.8);}
+    .tab-btn.active{color:#fff;border-bottom-color:var(--amber2);}
+    .tab-content{display:none;}
+    .tab-content.active{display:block;}
+    .main{max-width:1380px;margin:0 auto;padding:32px 40px 60px;}
+    .section-title{font-family:Georgia,serif;font-size:17px;font-weight:600;color:var(--navy);margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:10px;}
+    .section-title .dot{width:8px;height:8px;background:var(--amber);border-radius:50%;flex-shrink:0;}
+    .kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:36px;}
+    .kpi-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:20px 22px;box-shadow:var(--card-shadow);position:relative;overflow:hidden;}
+    .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+    .kpi-card.y2022::before{background:#94A3B8;}.kpi-card.y2023::before{background:#60A5FA;}
+    .kpi-card.y2024::before{background:#34D399;}.kpi-card.y2025::before{background:var(--amber2);}
+    .kpi-card.y2026::before{background:linear-gradient(90deg,var(--blue),var(--green));}
+    .kpi-card .year-label{font-size:11px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+    .kpi-card .amount{font-family:'Courier New',monospace;font-size:22px;font-weight:600;color:var(--navy);line-height:1;margin-bottom:8px;}
+    .kpi-card .amount span{font-size:13px;font-weight:300;}
+    .kpi-card .change{font-size:12px;font-weight:500;display:flex;align-items:center;gap:4px;}
+    .change.up{color:var(--red);}.change.down{color:var(--green);}.change.flat{color:var(--muted);}
+    .kpi-card.y2026 .amount{color:var(--blue);}
+    .kpi-note{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4;}
+    .two-col{display:grid;grid-template-columns:1.6fr 1fr;gap:24px;margin-bottom:36px;}
+    .card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:24px;box-shadow:var(--card-shadow);}
+    .chart-wrap{position:relative;}
+    .full-section{margin-bottom:36px;}
+    .full-card{background:#fff;border:1px solid var(--border);border-radius:8px;padding:24px;box-shadow:var(--card-shadow);}
+    .yoy-table{width:100%;border-collapse:collapse;font-size:13px;}
+    .yoy-table thead th{background:var(--navy);color:#fff;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:10px 14px;text-align:right;}
+    .yoy-table thead th:first-child{text-align:left;}
+    .yoy-table tbody tr{border-bottom:1px solid #F1F5F9;}
+    .yoy-table tbody tr:hover{background:#F8FAFC;}
+    .yoy-table td{padding:9px 14px;text-align:right;}
+    .yoy-table td:first-child{text-align:left;font-weight:500;color:var(--navy);}
+    .yoy-table tfoot td{padding:11px 14px;font-weight:600;font-size:12px;background:#F8FAFC;border-top:2px solid var(--border);text-align:right;}
+    .yoy-table tfoot td:first-child{text-align:left;color:var(--navy);}
+    .pill{display:inline-block;padding:2px 7px;border-radius:10px;font-size:11.5px;font-family:'Courier New',monospace;font-weight:500;}
+    .pill.pos{background:#FEE2E2;color:var(--red);}.pill.neg{background:#D1FAE5;color:#065F46;}
+    .pill.neu{background:#F1F5F9;color:var(--slate);}.pill.big{background:#FEF3C7;color:#92400E;font-weight:700;}
+    .avg-col{color:var(--blue)!important;font-weight:600!important;font-family:'Courier New',monospace;}
+    .exc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+    .exc-year-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+    .exc-year-header{padding:10px 16px;font-size:13px;font-weight:700;color:#fff;}
+    .exc-year-header.y2022{background:#475569;}.exc-year-header.y2023{background:#2563EB;}
+    .exc-year-header.y2024{background:#059669;}.exc-year-header.y2025{background:#D97706;}
+    .exc-item{padding:8px 14px;border-bottom:1px solid #F1F5F9;font-size:12px;}
+    .exc-item .desc{color:var(--text);line-height:1.35;margin-bottom:2px;}
+    .exc-item .amt{font-family:'Courier New',monospace;font-weight:600;font-size:12px;color:var(--amber);}
+    .exc-total{padding:9px 14px;background:#FAFAFA;border-top:2px solid var(--border);font-size:12px;font-weight:700;color:var(--navy);display:flex;justify-content:space-between;}
+    .exc-total span{font-family:'Courier New',monospace;color:var(--amber);}
+    .forecast-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:24px;margin-bottom:36px;}
+    .forecast-table{width:100%;border-collapse:collapse;font-size:13px;}
+    .forecast-table thead th{background:var(--navy3);color:#fff;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:9px 13px;text-align:right;}
+    .forecast-table thead th:first-child{text-align:left;}
+    .forecast-table tbody tr{border-bottom:1px solid #F1F5F9;}
+    .forecast-table tbody tr:hover{background:#F8FAFC;}
+    .forecast-table td{padding:8px 13px;text-align:right;}
+    .forecast-table td:first-child{text-align:left;font-weight:500;color:var(--navy);}
+    .forecast-table .fv{font-family:'Courier New',monospace;font-weight:600;color:var(--blue);}
+    .forecast-table tfoot td{padding:10px 13px;font-weight:700;background:#EFF6FF;border-top:2px solid #BFDBFE;}
+    .cc{font-size:11px;font-family:'Courier New',monospace;padding:1px 6px;border-radius:4px;}
+    .cc.up{background:#FEE2E2;color:var(--red);}.cc.down{background:#D1FAE5;color:#065F46;}
+    .abox{background:#FFFBEB;border:1px solid #FDE68A;border-radius:8px;padding:18px 20px;font-size:13px;line-height:1.6;}
+    .abox h4{font-size:13px;font-weight:700;color:#92400E;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px;}
+    .abox ul{padding-left:16px;color:#78350F;}.abox ul li{margin-bottom:5px;}
+    .abox .tb{margin-top:16px;padding-top:14px;border-top:1px solid #FDE68A;}
+    .abox .tb .lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:#92400E;}
+    .abox .tb .val{font-family:Georgia,serif;font-size:28px;font-weight:700;color:var(--blue);line-height:1.1;}
+    .abox .tb .sub{font-size:12px;color:var(--muted);margin-top:2px;}
+    .disclaimer{background:#fff;border:1px solid var(--border);border-left:4px solid var(--blue);border-radius:0 6px 6px 0;padding:14px 18px;font-size:12px;color:var(--muted);line-height:1.65;margin-bottom:32px;}
+    .disclaimer strong{color:var(--navy);}
+    /* CASHFLOW */
+    .cf-hero-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+    .cf-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:22px;box-shadow:var(--card-shadow);position:relative;overflow:hidden;}
+    .cf-card::after{content:'';position:absolute;top:0;left:0;bottom:0;width:4px;border-radius:10px 0 0 10px;}
+    .cf-card.q1::after{background:#2563EB;}.cf-card.q2::after{background:#10B981;}
+    .cf-card.q3::after{background:#F59E0B;}.cf-card.q4::after{background:#8B5CF6;}
+    .cf-card .ql{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+    .cf-card.q1 .ql{color:#2563EB;}.cf-card.q2 .ql{color:#10B981;}
+    .cf-card.q3 .ql{color:#D97706;}.cf-card.q4 .ql{color:#8B5CF6;}
+    .cf-card .cp{font-size:12px;color:var(--muted);margin-bottom:12px;}
+    .cf-card .cpct{font-family:Georgia,serif;font-size:32px;font-weight:700;color:var(--navy);line-height:1;}
+    .cf-card .camnt{font-family:'Courier New',monospace;font-size:13px;color:var(--muted);margin-top:5px;}
+    .cf-card .cdrv{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.5;border-top:1px solid var(--border);padding-top:10px;}
+    .cf-card .cdrv strong{color:var(--text);}
+    .prov-compare{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px;}
+    .prov-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:22px;box-shadow:var(--card-shadow);}
+    .prov-card h4{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+    .bc{background:#F1F5F9;color:var(--slate);font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;}
+    .bo{background:#DBEAFE;color:#1D4ED8;font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;}
+    .prov-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);}
+    .prov-row:last-child{border-bottom:none;}
+    .prov-q{font-weight:600;font-size:13px;color:var(--navy);}
+    .prov-val{font-family:'Courier New',monospace;font-size:14px;font-weight:600;}
+    .prov-pct{font-size:11px;color:var(--muted);}
+    .prov-diff{font-size:12px;font-family:'Courier New',monospace;font-weight:600;}
+    .prov-diff.higher{color:var(--red);}.prov-diff.lower{color:var(--green);}
+    .prov-total{margin-top:14px;padding-top:14px;border-top:2px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+    .prov-total .lbl{font-size:12px;font-weight:600;color:var(--navy);text-transform:uppercase;letter-spacing:.4px;}
+    .prov-total .val{font-family:'Courier New',monospace;font-size:18px;font-weight:700;color:var(--navy);}
+    .advice-box{background:linear-gradient(135deg,#EFF6FF 0%,#DBEAFE 100%);border:1px solid #BFDBFE;border-radius:10px;padding:24px;margin-bottom:32px;}
+    .advice-box h3{font-family:Georgia,serif;font-size:18px;color:var(--navy);margin-bottom:16px;}
+    .advice-items{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+    .advice-item{background:rgba(255,255,255,.7);border-radius:8px;padding:16px;}
+    .advice-item .an{font-family:'Courier New',monospace;font-size:24px;font-weight:600;color:var(--blue);margin-bottom:8px;}
+    .advice-item h5{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px;}
+    .advice-item p{font-size:12.5px;color:var(--muted);line-height:1.55;}
+    .gas-insight{background:#fff;border:1px solid var(--border);border-radius:8px;padding:20px 24px;margin-bottom:32px;box-shadow:var(--card-shadow);}
+    .gas-insight h4{font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+    .gas-insight p{font-size:13px;color:var(--muted);margin-bottom:16px;}
+    .gsb{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+    .sb{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;}
+    .sb.w{background:#DBEAFE;color:#1D4ED8;}.sb.sp{background:#D1FAE5;color:#065F46;}
+    .sb.su{background:#FEF3C7;color:#92400E;}.sb.a{background:#EDE9FE;color:#5B21B6;}
+    .cf-balance{background:#fff;border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:32px;box-shadow:var(--card-shadow);}
+    footer{background:var(--navy);color:rgba(255,255,255,.45);font-size:11.5px;padding:18px 48px;display:flex;justify-content:space-between;align-items:center;}
+    footer strong{color:rgba(255,255,255,.7);}
+    @media(max-width:1100px){.kpi-grid{grid-template-columns:repeat(3,1fr);}.two-col,.forecast-grid,.prov-compare{grid-template-columns:1fr;}.exc-grid,.cf-hero-grid{grid-template-columns:repeat(2,1fr);}.advice-items{grid-template-columns:1fr 1fr;}}
+    @media(max-width:700px){.main{padding:20px 16px 40px;}.page-header{flex-direction:column;align-items:flex-start;padding:20px;}.tab-nav{padding:0 16px;}.kpi-grid,.cf-hero-grid{grid-template-columns:repeat(2,1fr);}.exc-grid,.advice-items{grid-template-columns:1fr;}.tab-btn{padding:12px 14px;font-size:12px;}}
+  </style>
+</head>
+<body>
+<header class="page-header">
+  <div class="header-left">
+    <div class="badge-period">Kostendashboard &middot; 2022&ndash;2025 + Prognose 2026</div>
+    <h1>August Vermeylenlaan 5/7</h1>
+    <div class="subtitle">2050 Antwerpen &nbsp;&middot;&nbsp; VME &middot; KBO 0817.372.874 &nbsp;&middot;&nbsp; Afgedrukt: 15 april 2026</div>
+  </div>
+  <div class="header-right">
+    <strong>Syndicus</strong><br>
+    Algemeen Beheer 2.0 B.V.<br>
+    Itali&euml;lei 221 &middot; 2000 Antwerpen<br>
+    Tel. 03 254 29 31 &middot; BIV 202.172
+  </div>
+</header>
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('kosten',this)"><span>&#128202;</span> Kostenanalyse</button>
+  <button class="tab-btn" onclick="switchTab('cashflow',this)"><span>&#128176;</span> Cashflow &amp; Provisie</button>
+</nav>
+
+<!-- TAB 1 -->
+<div id="tab-kosten" class="tab-content active"><div class="main">
+  <div class="kpi-grid">
+    <div class="kpi-card y2022"><div class="year-label">2022</div><div class="amount">&#8364; 406.956 <span>netto</span></div><div class="change flat">&#8212; Basisjaar</div><div class="kpi-note">Debet: &#8364; 516.841<br>Recuperaties: &#8364; 109.885</div></div>
+    <div class="kpi-card y2023"><div class="year-label">2023</div><div class="amount">&#8364; 327.773 <span>netto</span></div><div class="change down">&#9660; &minus;19,5% vs 2022</div><div class="kpi-note">Debet: &#8364; 388.179<br>Recuperaties: &#8364; 60.406</div></div>
+    <div class="kpi-card y2024"><div class="year-label">2024</div><div class="amount">&#8364; 381.488 <span>netto</span></div><div class="change up">&#9650; +16,4% vs 2023</div><div class="kpi-note">Debet: &#8364; 517.152<br>Recuperaties: &#8364; 135.664</div></div>
+    <div class="kpi-card y2025"><div class="year-label">2025 *</div><div class="amount">&#8364; 537.862 <span>netto</span></div><div class="change up">&#9650; +40,9% vs 2024</div><div class="kpi-note">*Ind. verbruik (~&#8364;71K) niet verrekend &rarr; gecorr. &#8776;&#8364;467K</div></div>
+    <div class="kpi-card y2026"><div class="year-label">2026 Prognose</div><div class="amount">&#8364; 413.200 <span>excl. uitsch.</span></div><div class="change flat">Structurele basis &middot; +3% inflatie</div><div class="kpi-note">Geen niet-herhaalbare uitzonderingen</div></div>
+  </div>
+  <div class="disclaimer"><strong>Methodologische noot:</strong> Netto = debet minus credits (individueel verbruik verwarming, reservefonds). 2022: &#8364;100.813 ind. verbruik; 2023: &#8364;43.117; 2024: &#8364;71.294. Voor 2025 nog niet afgerekend. Gecorrigeerd 2025 &#8776; &#8364;467.000.</div>
+  <div class="section-title"><span class="dot"></span> Kostentrendanalyse 2022&ndash;2026</div>
+  <div class="two-col">
+    <div class="card"><div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Totale netto VME-kosten (gecorrigeerd voor individueel verwarmingsverbruik)</div><div class="chart-wrap" style="height:280px;"><canvas id="trendChart"></canvas></div></div>
+    <div class="card"><div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Kostenverdeling 2025 &mdash; Debet per categorie</div><div class="chart-wrap" style="height:280px;"><canvas id="donutChart"></canvas></div></div>
+  </div>
+  <div class="full-section">
+    <div class="section-title"><span class="dot"></span> Kostenopbouw per categorie &mdash; 2022 t/m 2025 (debet)</div>
+    <div class="full-card"><div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Bruto uitgaven per kostensoort. Klik op legenda-items om te filteren.</div><div class="chart-wrap" style="height:360px;"><canvas id="stackedBar"></canvas></div></div>
+  </div>
+  <div class="full-section">
+    <div class="section-title"><span class="dot"></span> Jaarlijkse procentuele verandering per kostenpost</div>
+    <div class="full-card" style="overflow-x:auto;">
+      <table class="yoy-table">
+        <thead><tr><th style="text-align:left;min-width:180px;">Kostenpost</th><th>2022</th><th>2023</th><th>&#916; 22&rarr;23</th><th>2024</th><th>&#916; 23&rarr;24</th><th>2025</th><th>&#916; 24&rarr;25</th><th style="background:var(--navy3);">Gem. &#916;</th></tr></thead>
+        <tbody id="yoyBody"></tbody>
+        <tfoot><tr><td>TOTAAL (debet)</td><td>516.841</td><td>388.179</td><td><span class="pill neg">&minus;24,9%</span></td><td>517.152</td><td><span class="pill pos">+33,2%</span></td><td>568.859</td><td><span class="pill pos">+10,0%</span></td><td class="avg-col">+4,8%</td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+  <div class="full-section">
+    <div class="section-title"><span class="dot"></span> Uitzonderlijke &amp; niet-herhaalbare kosten per jaar</div>
+    <div class="exc-grid" id="excGrid"></div>
+  </div>
+  <div class="section-title"><span class="dot"></span> Prognose 2026 &mdash; Structurele kosten</div>
+  <div class="forecast-grid">
+    <div class="card"><div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Verwachte terugkerende kosten 2026 (+3% inflatie, zonder uitzonderingen)</div>
+      <table class="forecast-table"><thead><tr><th>Kostenpost</th><th>Basis 2025</th><th>2026 Prognose</th><th>&#916;</th></tr></thead><tbody id="forecastBody"></tbody><tfoot id="forecastFoot"></tfoot></table>
+    </div>
+    <div>
+      <div class="abox">
+        <h4>Aannames &amp; uitsluitingen</h4>
+        <ul>
+          <li><strong>Niet:</strong> terrasherstellingen 2025 (&#8364;39.699)</li>
+          <li><strong>Niet:</strong> rookgasvoering 2025 (&#8364;25.355)</li>
+          <li><strong>Niet:</strong> asbestattest (&#8364;10.525)</li>
+          <li><strong>Niet:</strong> LUMO architecten (&#8364;8.210)</li>
+          <li><strong>Niet:</strong> elektrische conformiteit (reservefonds)</li>
+          <li><strong>Niet:</strong> rookmelders installatie (&#8364;8.024)</li>
+          <li><strong>Bezoldigingen:</strong> genorm. (excl. retroact. &#8364;13K)</li>
+          <li><strong>Inflatie:</strong> +3% op structurele posten</li>
+        </ul>
+        <div class="tb"><div class="lbl">Totale prognose 2026</div><div class="val">&#8364; 413.200</div><div class="sub">&#177;10% betrouwbaarheidsinterval</div></div>
+      </div>
+      <div class="abox" style="margin-top:16px;background:#EFF6FF;border-color:#BFDBFE;">
+        <h4 style="color:#1E3A8A;">Aandachtspunten 2026</h4>
+        <ul style="color:#1E40AF;">
+          <li>Terrasherstellingen (Finishing BV) lopen door</li>
+          <li>Elektrische conformiteit (EWP Van Riet) nog lopend</li>
+          <li>Bezoldigingen stijgen door loonindexatie</li>
+          <li>Waterfactuur 2025 normaliseert in 2026</li>
+          <li>Reservefonds: aanvulling aanbevolen</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="full-section">
+    <div class="section-title"><span class="dot"></span> Verandering per categorie &mdash; 2024 naar 2025</div>
+    <div class="full-card"><div style="font-size:13px;color:var(--muted);margin-bottom:16px;">Procentuele toename/afname per kostensoort (2024 &rarr; 2025). Rood = stijging, groen = daling.</div><div class="chart-wrap" style="height:340px;"><canvas id="hBarChart"></canvas></div></div>
+  </div>
+</div></div><!-- end tab1 -->
+
+<!-- TAB 2 -->
+<div id="tab-cashflow" class="tab-content"><div class="main">
+  <div class="section-title"><span class="dot"></span> Kwartaalverdeling van de jaarlijkse uitgaven</div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Gebaseerd op analyse van alle factuurdata 2022&ndash;2025. De verdeling wordt sterk bepaald door het seizoenspatroon van de gaskosten en de jaarlijkse contractfacturen die traditioneel in K1 vallen.</p>
+  <div class="cf-hero-grid">
+    <div class="cf-card q1"><div class="ql">Kwartaal 1</div><div class="cp">Januari &ndash; Maart</div><div class="cpct">36%</div><div class="camnt">&#8776; &#8364;149.000 van &#8364;413K prognose</div><div class="cdrv"><strong>Waarom zo hoog?</strong><br>Piekverbruik gasverwarming (&plusmn;40% v/h jaargas) &middot; Jaarcontracten lift, brandbeveiliging, verzekeringen &middot; RSZ vakantiegeld</div></div>
+    <div class="cf-card q2"><div class="ql">Kwartaal 2</div><div class="cp">April &ndash; Juni</div><div class="cpct">24%</div><div class="camnt">&#8776; &#8364;99.200 van &#8364;413K prognose</div><div class="cdrv"><strong>Relatief rustiger</strong><br>Gas daalt snel (lente) &middot; Tuinkosten op kruissnelheid &middot; Algemene vergaderingskosten &middot; Kleinere herstellingen na winter</div></div>
+    <div class="cf-card q3"><div class="ql">Kwartaal 3</div><div class="cp">Juli &ndash; September</div><div class="cpct">18%</div><div class="camnt">&#8776; &#8364;74.400 van &#8364;413K prognose</div><div class="cdrv"><strong>Laagste kwartaal</strong><br>Zomer: nagenoeg geen gasverwarming &middot; Enkel lopende contracten (tuinen, personeel) &middot; Ideaal moment voor onderhoud</div></div>
+    <div class="cf-card q4"><div class="ql">Kwartaal 4</div><div class="cp">Oktober &ndash; December</div><div class="cpct">22%</div><div class="camnt">&#8776; &#8364;90.600 van &#8364;413K prognose</div><div class="cdrv"><strong>Herstart verwarming</strong><br>Gas neemt toe (nov&ndash;dec) &middot; Jaareindesettlements &middot; Commissaris vergoeding &middot; Wintervoorbereiding</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card"><div style="font-size:14px;font-weight:600;color:var(--navy);margin-bottom:4px;">Kwartaaluitgaven per jaar</div><div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Geschatte kosten per kwartaal 2022&ndash;2025 (gecorr., excl. ind. verwarmingsverbruik)</div><div class="chart-wrap" style="height:290px;"><canvas id="cfBarChart"></canvas></div></div>
+    <div class="card"><div style="font-size:14px;font-weight:600;color:var(--navy);margin-bottom:4px;">Kwartaalaandeel vs gelijkmatige provisie</div><div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Gemiddeld werkelijk % per kwartaal vs huidig gelijkmatig systeem (25%)</div><div class="chart-wrap" style="height:290px;"><canvas id="cfPctChart"></canvas></div></div>
+  </div>
+  <div class="section-title" style="margin-top:8px;"><span class="dot"></span> Seizoenspatroon Gasverbruik &mdash; de motor achter de cashflow</div>
+  <div class="gas-insight">
+    <h4>Gasverbruik is de dominante seizoensvariabele (&plusmn;30&ndash;40% van totale VME-kosten)</h4>
+    <p>Het gasverbruik is verantwoordelijk voor de grote schommelingen in de maandelijkse uitgaven. Centrale verwarming draait van oktober t/m april; zomer minimaal. Grafiek toont maandelijkse gaskosten per jaar (Engie factuurdata).</p>
+    <div class="chart-wrap" style="height:260px;"><canvas id="gasMonthChart"></canvas></div>
+    <div class="gsb">
+      <span class="sb w">&#10052; Winter (K1+K4): ~62% van jaargas</span>
+      <span class="sb sp">&#127807; Lente (K2): ~21% van jaargas</span>
+      <span class="sb su">&#9728; Zomer (K3): ~11% van jaargas</span>
+      <span class="sb a">&#127810; Herfst start K4: ~6% toename oktober</span>
+    </div>
+  </div>
+  <div class="section-title"><span class="dot"></span> Provisie-optimalisatie: huidig vs aanbevolen schema</div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:20px;">Vergelijking <strong>huidig gelijkmatig systeem</strong> vs <strong>seizoensgestuurd systeem</strong> op basis van werkelijke kostenpatronen, toegepast op 2026-prognose &#8364;413.200.</p>
+  <div class="prov-compare">
+    <div class="prov-card">
+      <h4 style="color:var(--navy);">Huidig systeem <span class="bc">Gelijkmatig</span></h4>
+      <div class="prov-row"><div><div class="prov-q">K1 &mdash; jan/feb/mrt</div><div class="prov-pct">25% van jaartotaal</div></div><div style="text-align:right;"><div class="prov-val" style="color:var(--slate);">&#8364; 103.300</div><div class="prov-diff higher">Tekort: &minus;&#8364;45.700</div></div></div>
+      <div class="prov-row"><div><div class="prov-q">K2 &mdash; apr/mei/jun</div><div class="prov-pct">25% van jaartotaal</div></div><div style="text-align:right;"><div class="prov-val" style="color:var(--slate);">&#8364; 103.300</div><div class="prov-diff higher">Licht overschot</div></div></div>
+      <div class="prov-row"><div><div class="prov-q">K3 &mdash; jul/aug/sep</div><div class="prov-pct">25% van jaartotaal</div></div><div style="text-align:right;"><div class="prov-val" style="color:var(--slate);">&#8364; 103.300</div><div class="prov-diff lower">Overschot: +&#8364;28.900</div></div></div>
+      <div class="prov-row"><div><div class="prov-q">K4 &mdash; okt/nov/dec</div><div class="prov-pct">25% van jaartotaal</div></div><div style="text-align:right;"><div class="prov-val" style="color:var(--slate);">&#8364; 103.300</div><div class="prov-diff lower">Licht overschot</div></div></div>
+      <div class="prov-total"><div class="lbl">Jaartotaal</div><div class="val">&#8364; 413.200</div></div>
+      <div style="margin-top:12px;padding:10px 12px;background:#FEF2F2;border-radius:6px;font-size:12px;color:#991B1B;line-height:1.5;">&#9888; <strong>Probleem:</strong> In K1 wordt ~&#8364;149K uitgegeven maar slechts &#8364;103K opgevraagd &rarr; VME heeft een liquiditeitstekort van &plusmn;&#8364;46K en moet reserves aanspreken.</div>
+    </div>
+    <div class="prov-card" style="border-color:#BFDBFE;">
+      <h4 style="color:var(--blue);">Aanbevolen systeem <span class="bo">Seizoensgestuurd</span></h4>
+      <div class="prov-row"><div><div class="prov-q" style="color:#2563EB;">K1 &mdash; jan/feb/mrt</div><div class="prov-pct">36% van jaartotaal</div></div><div style="text-align:right;"><div class="prov-val" style="color:var(--blue);">&#8364; 149.000</div><div class="prov-diff higher">+&#8364;45.700 vs huidig</div></div></div>
+      <div class="prov-row"><div><div class="prov-q" style="color:#059669;">K2 &mdash; apr/mei/jun</div><div class="prov-pct">24% van jaartotaal</div></div><div style="text-align:right;"><div class="prov-val" style="color:var(--green);">&#8364; 99.200</div><div class="prov-diff lower">&minus;&#8364;4.100 vs huidig</div></div></div>
+      <div class="prov-row"><div><div class="prov-q" style="color:#D97706;">K3 &mdash; jul/aug/sep</div><div class="prov-pct">18% van jaartotaal</div></div><div style="text-align:right;"><div class="prov-val" style="color:var(--amber);">&#8364; 74.400</div><div class="prov-diff lower">&minus;&#8364;28.900 vs huidig</div></div></div>
+      <div class="prov-row"><div><div class="prov-q" style="color:#8B5CF6;">K4 &mdash; okt/nov/dec</div><div class="prov-pct">22% van jaartotaal</div></div><div style="text-align:right;"><div class="prov-val" style="color:#8B5CF6;">&#8364; 90.600</div><div class="prov-diff lower">&minus;&#8364;12.700 vs huidig</div></div></div>
+      <div class="prov-total" style="border-color:#BFDBFE;"><div class="lbl" style="color:var(--blue);">Jaartotaal</div><div class="val" style="color:var(--blue);">&#8364; 413.200</div></div>
+      <div style="margin-top:12px;padding:10px 12px;background:#F0FDF4;border-radius:6px;font-size:12px;color:#166534;line-height:1.5;">&#10003; <strong>Voordeel:</strong> Kasstromen in evenwicht elk kwartaal. Geen reserves nodig voor K1-pieken. Eigenaars betalen minder in zomermaanden.</div>
+    </div>
+  </div>
+  <div class="cf-balance">
+    <div style="font-size:14px;font-weight:600;color:var(--navy);margin-bottom:4px;">Kassaldo-verloop 2026 &mdash; Huidig vs Aanbevolen</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:16px;">Cumulatief kassaldo na aftrek maandelijkse kosten. Provisie ontvangen begin elk kwartaal. Negatief = reserves aanspreken.</div>
+    <div class="chart-wrap" style="height:260px;"><canvas id="balanceChart"></canvas></div>
+  </div>
+  <div class="advice-box">
+    <h3>&#128161; Advies: Overstap naar seizoensgestuurd provisieplan</h3>
+    <div class="advice-items">
+      <div class="advice-item"><div class="an">01</div><h5>K1 aanzienlijk verhogen</h5><p>Vraag in januari &#8364;149.000 op (+44% t.o.v. gelijkmatig). Dit dekt de piekgaskosten jan&ndash;mrt &eacute;n de jaarlijkse contractfacturen (lift, verzekeringen, rechtsbijstand) die traditioneel in K1 vallen.</p></div>
+      <div class="advice-item"><div class="an">02</div><h5>K3 beduidend verlagen</h5><p>Juli&ndash;september zijn historisch de goedkoopste maanden: nagenoeg geen gasverbruik, louter vaste contractkosten. Een provisie van &#8364;74.400 volstaat en verlicht de last voor eigenaars in de vakantieperiode.</p></div>
+      <div class="advice-item"><div class="an">03</div><h5>Reservefonds als veiligheidsbuffer</h5><p>Zelfs met geoptimaliseerde provisies kunnen grote &eacute;&eacute;nmalige kosten (terrassen, rookgasvoering) het kwartaalsaldo be&iuml;nvloeden. Houd min. 2 maanden provisie als kassaldo aan en vul het reservefonds na de grote onttrekkingen van 2024&ndash;2025.</p></div>
+    </div>
+  </div>
+  <div class="full-section">
+    <div class="section-title"><span class="dot"></span> Maandelijkse gaskosten per jaar &mdash; factuurdata Engie</div>
+    <div class="full-card" style="overflow-x:auto;">
+      <table class="yoy-table">
+        <thead><tr><th style="text-align:left;">Maand</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th><th style="background:var(--navy3);">Gem.</th><th style="background:var(--navy3);">% v/jaar</th></tr></thead>
+        <tbody id="gasTableBody"></tbody>
+        <tfoot><tr><td>TOTAAL GAS</td><td>144.882</td><td>62.082</td><td>117.206</td><td>121.582</td><td class="avg-col">111.438</td><td class="avg-col">100%</td></tr></tfoot>
+      </table>
+    </div>
+  </div>
+</div></div><!-- end tab2 -->
+
+<footer>
+  <span>&copy; 2026 Algemeen Beheer 2.0 B.V. &mdash; Itali&euml;lei 221, 2000 Antwerpen &middot; BIV 202.172</span>
+  <span><strong>August Vermeylenlaan 5/7</strong> &middot; KBO 0817.372.874 &middot; Dashboard 15/04/2026</span>
+</footer>
+
+<script>
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
 }
 
-function updateVergelijking(i){
-  document.querySelectorAll('#perioBtns button').forEach((b,j)=>{
-    b.style.background=j===i?'var(--color-text-primary)':'none';
-    b.style.color=j===i?'var(--color-background-primary)':'var(--color-text-secondary)';
-  });
-  buildVergChart(i);
+var YEARS=['2022','2023','2024','2025'];
+var CATS=[
+  {name:'Energie (Gas+Water+Elek.)',color:'#F59E0B',v:[239023,123158,183940,213619]},
+  {name:'Bezoldigingen & Personeel',color:'#8B5CF6',v:[24472,47622,41282,59665]},
+  {name:'Erelonen & Beheer',color:'#2563EB',v:[37198,52920,49790,71270]},
+  {name:'Tuinen & Omgeving',color:'#10B981',v:[16742,18807,35552,37133]},
+  {name:'Sanitair & Verwarming',color:'#EF4444',v:[12441,26432,72940,41531]},
+  {name:'Verzekeringen',color:'#6366F1',v:[19534,22799,23546,24894]},
+  {name:'Liften',color:'#0EA5E9',v:[13378,19450,13705,13449]},
+  {name:'Schoonmaak',color:'#F472B6',v:[29365,6179,11444,4538]},
+  {name:'Brandbeveiliging',color:'#FB923C',v:[9493,1972,2619,25283]},
+  {name:'Onderhoud & Renovatie',color:'#78716C',v:[3218,10176,3692,40931]},
+];
+var TREND_L=['2022','2023','2024','2025 (gecorr.)','2026 (prog.)'];
+var TREND_V=[306143,284656,310194,466862,413200];
+var YOY=[
+  {cat:'Energie (Gas+Water+Elek.)',v:[239023,123158,183940,213619]},
+  {cat:'Bezoldigingen & Personeel',v:[24472,47622,41282,59665]},
+  {cat:'Erelonen & Beheer',v:[37198,52920,49790,71270]},
+  {cat:'Tuinen & Omgeving',v:[16742,18807,35552,37133]},
+  {cat:'Sanitair & Verwarming',v:[12441,26432,72940,41531]},
+  {cat:'Verzekeringen',v:[19534,22799,23546,24894]},
+  {cat:'Liften',v:[13378,19450,13705,13449]},
+  {cat:'Schoonmaak',v:[29365,6179,11444,4538]},
+  {cat:'Brandbeveiliging',v:[9493,1972,2619,25283]},
+  {cat:'Onderhoud & Renovatie',v:[3218,10176,3692,40931]},
+];
+var EXC=[
+  {year:'2022',cls:'y2022',items:[{d:'EPC gemeenschappelijke delen',a:1603},{d:'Boomwerken TREE CAMP',a:2471},{d:'Buitenkranen + wasmachine VMT',a:3692},{d:'Herstelling waterschade lift',a:1677},{d:'RSZ-correcties ACERTA',a:2458},{d:'Advocaten Baluwe & co',a:4617}],tot:16518},
+  {year:'2023',cls:'y2023',items:[{d:'Camerabewaking ASEQ',a:4960},{d:'FEDRIS ambtshalve aansluiting',a:4937},{d:'Vonnis VME-Mertens + rolrecht',a:6477},{d:'Schakelbord & contactoren lift',a:4938},{d:'Herst. verwarmingsleidingen',a:4902},{d:'RVM-vergoeding nieuw K1-K4',a:12391},{d:'Advocaten diverse dossiers',a:6195}],tot:44800},
+  {year:'2024',cls:'y2024',items:[{d:'Sanitaire afsluitkranen (reservef.)',a:48527},{d:'Sanitaire laadpomp (reservef.)',a:2543},{d:'Schrob- en dweilmachine A&B',a:7259},{d:'Camera recuperatie reservefonds',a:-5239},{d:'Expertise terrasproblematiek',a:1041},{d:'AVRIO deskundige',a:2096},{d:'El. keuring EWP Van Riet',a:1908}],tot:58135},
+  {year:'2025',cls:'y2025',items:[{d:'Terrasherstellingen vord. 1+2 (Finishing BV)',a:36064},{d:'Rookgasvoering BONDEC (3 fases)',a:25355},{d:'Asbestattest EPC VAES',a:10525},{d:'LUMO Architecten terrasrenovatie',a:8210},{d:'Rookmelders + installatie PSC',a:8024},{d:'El. conformiteit EWP Van Riet',a:17392},{d:'SD Worx retroact. correcties 2022-24',a:13215}],tot:127685},
+];
+var FORECAST=[
+  {cat:'Water',base:55000,prog:56700},{cat:'Gas',base:119000,prog:118000},
+  {cat:'Elektriciteit',base:18600,prog:19200},{cat:'Tuinen & Omgeving',base:37133,prog:38500},
+  {cat:'Bezoldigingen',base:46500,prog:48000},{cat:'Erelonen Syndicus',base:25914,prog:26700},
+  {cat:'Erelonen Adv./Experts',base:7000,prog:7500},{cat:'Sanitair & Verw.',base:16000,prog:17000},
+  {cat:'Liften',base:13449,prog:14000},{cat:'Verzekeringen',base:24894,prog:25600},
+  {cat:'Beheer & Admin/RVM',base:20042,prog:20600},{cat:'Schoonmaak',base:4538,prog:4700},
+  {cat:'Brandbeveiliging',base:3400,prog:3500},{cat:'Onderhoud Bouwwerken',base:2000,prog:3000},
+  {cat:'Overige',base:3500,prog:4000},{cat:'Renovatie struct.',base:3000,prog:3000},
+  {cat:'Conciergewoning',base:800,prog:900},
+];
+var GAS={
+  '2022':[48772,23886,21186,23163,12116,1957,1219,913,1348,2471,2852,5108],
+  '2023':[4897,5761,4319,2940,1929,1104,3092,3148,3607,6496,14880,9908],
+  '2024':[21983,11860,11862,10308,9376,5409,5767,2407,3728,9921,13748,10836],
+  '2025':[24627,15929,12000,8860,6107,5825,3292,3750,5545,7554,13229,14836],
+};
+var GAS_AVG=GAS['2022'].map(function(_,i){return Math.round((GAS['2022'][i]+GAS['2023'][i]+GAS['2024'][i]+GAS['2025'][i])/4);});
+var MONTHS=['Jan','Feb','Mrt','Apr','Mei','Jun','Jul','Aug','Sep','Okt','Nov','Dec'];
+var MONTHS_FULL=['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
+var CF_Q={'2022':[128520,85680,39780,52020],'2023':[68400,74100,71250,71250],'2024':[108500,68200,58900,74400],'2025':[176800,93200,102500,93100]};
+var gasTotal2026=118000;
+var gasSum=GAS_AVG.reduce(function(a,b){return a+b;},0);
+var gasMon2026=GAS_AVG.map(function(v){return Math.round(v/gasSum*gasTotal2026);});
+var fixedMon=Math.round((413200-118000-42000)/12);
+var bump=[42000,0,0,0,0,0,0,0,0,0,0,0];
+var monSpend=gasMon2026.map(function(g,i){return g+fixedMon+bump[i];});
+var PROV_EQ=[103300,103300,103300,103300];
+var PROV_OP=[149000,99200,74400,90600];
+function buildBal(prov){
+  var bal=0,out=[];
+  for(var q=0;q<4;q++){
+    bal+=prov[q];
+    for(var m=0;m<3;m++){bal-=monSpend[q*3+m];out.push(Math.round(bal));}
+  }
+  return out;
 }
+var balEq=buildBal(PROV_EQ), balOp=buildBal(PROV_OP);
 
-buildChart('trends');inited['trends']=true;
+function fmt(n){return Math.round(Math.abs(n)).toLocaleString('nl-BE');}
+function pct(a,b){if(a===0)return '&mdash;';return ((b-a)/Math.abs(a)*100).toFixed(1)+'%';}
+function apct(v){var s=0,c=0;for(var i=1;i<v.length;i++){if(v[i-1]!==0){s+=(v[i]-v[i-1])/Math.abs(v[i-1]);c++;}}return c===0?'&mdash;':(s/c*100).toFixed(1)+'%';}
+function pcls(v){if(v.indexOf('&mdash;')>=0)return 'neu';var n=parseFloat(v);if(isNaN(n))return 'neu';if(Math.abs(n)>40)return 'big';return n>0?'pos':'neg';}
+
+var tooltipOpts={backgroundColor:'#0B1D35',titleColor:'#fff',bodyColor:'rgba(255,255,255,.85)',padding:12};
+var scaleOpts={y:{ticks:{callback:function(v){return '\u20ac'+Math.round(v/1000)+'K';},font:{size:11}},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false},ticks:{font:{size:11}}}};
+
+new Chart(document.getElementById('trendChart'),{type:'line',data:{labels:TREND_L,datasets:[{label:'Netto VME-kosten',data:TREND_V,borderColor:'#2563EB',backgroundColor:'rgba(37,99,235,.10)',fill:true,tension:.35,pointBackgroundColor:['#64748B','#60A5FA','#34D399','#F59E0B','#2563EB'],pointBorderColor:'#fff',pointRadius:7,pointHoverRadius:9,borderWidth:2.5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:tooltipOpts},scales:scaleOpts}});
+
+var donutTotal=CATS.reduce(function(s,c){return s+c.v[3];},0);
+new Chart(document.getElementById('donutChart'),{type:'doughnut',data:{labels:CATS.map(function(c){return c.name;}),datasets:[{data:CATS.map(function(c){return c.v[3];}),backgroundColor:CATS.map(function(c){return c.color;}),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,cutout:'62%',plugins:{legend:{position:'right',labels:{font:{size:10},padding:8,usePointStyle:true,boxWidth:10}},tooltip:{backgroundColor:'#0B1D35',titleColor:'#fff',bodyColor:'rgba(255,255,255,.85)',padding:10,callbacks:{label:function(ctx){return ' \u20ac'+Math.round(ctx.parsed).toLocaleString('nl-BE')+' ('+(ctx.parsed/donutTotal*100).toFixed(1)+'%)';}}}}}}); 
+
+new Chart(document.getElementById('stackedBar'),{type:'bar',data:{labels:YEARS,datasets:CATS.map(function(c){return{label:c.name,data:c.v,backgroundColor:c.color,stack:'s'};})},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},padding:12,usePointStyle:true,boxWidth:10}},tooltip:tooltipOpts},scales:{y:{stacked:true,ticks:{callback:function(v){return '\u20ac'+Math.round(v/1000)+'K';},font:{size:11}},grid:{color:'rgba(0,0,0,.05)'}},x:{stacked:true,grid:{display:false}}}}});
+
+var hd=CATS.map(function(c){return +((c.v[3]-c.v[2])/Math.abs(c.v[2])*100).toFixed(1);});
+new Chart(document.getElementById('hBarChart'),{type:'bar',data:{labels:CATS.map(function(c){return c.name;}),datasets:[{label:'% verandering 2024\u21922025',data:hd,borderRadius:4,backgroundColor:hd.map(function(v){return v>=0?'rgba(220,38,38,.75)':'rgba(5,150,105,.75)';})}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#0B1D35',titleColor:'#fff',bodyColor:'rgba(255,255,255,.85)',padding:10,callbacks:{label:function(ctx){return ' '+ctx.parsed.x.toFixed(1)+'%';}}}},scales:{x:{ticks:{callback:function(v){return v+'%';},font:{size:11}},grid:{color:'rgba(0,0,0,.05)'}},y:{grid:{display:false},ticks:{font:{size:11}}}}}});
+
+var tbody=document.getElementById('yoyBody');
+YOY.forEach(function(r){var d23=pct(r.v[0],r.v[1]),d24=pct(r.v[1],r.v[2]),d25=pct(r.v[2],r.v[3]),av=apct(r.v);var s23=parseFloat(d23)>0?'+':'',s24=parseFloat(d24)>0?'+':'',s25=parseFloat(d25)>0?'+':'',sav=parseFloat(av)>0?'+':'';tbody.innerHTML+='<tr><td>'+r.cat+'</td><td>\u20ac '+fmt(r.v[0])+'</td><td>\u20ac '+fmt(r.v[1])+'</td><td><span class="pill '+pcls(d23)+'">'+s23+d23+'</span></td><td>\u20ac '+fmt(r.v[2])+'</td><td><span class="pill '+pcls(d24)+'">'+s24+d24+'</span></td><td>\u20ac '+fmt(r.v[3])+'</td><td><span class="pill '+pcls(d25)+'">'+s25+d25+'</span></td><td class="avg-col">'+sav+av+'</td></tr>';});
+
+var eg=document.getElementById('excGrid');
+EXC.forEach(function(ey){var items=ey.items.map(function(it){return '<div class="exc-item"><div class="desc">'+it.d+'</div><div class="amt">\u20ac '+fmt(Math.abs(it.a))+(it.a<0?' (recuperatie)':'')+'</div></div>';}).join('');eg.innerHTML+='<div class="exc-year-card"><div class="exc-year-header '+ey.cls+'">Uitzonderlijk '+ey.year+'</div>'+items+'<div class="exc-total">Subtotaal <span>\u20ac '+fmt(ey.tot)+'</span></div></div>';});
+
+var fb=document.getElementById('forecastBody'),ff=document.getElementById('forecastFoot'),tB=0,tP=0;
+FORECAST.forEach(function(r){var d=((r.prog-r.base)/r.base*100).toFixed(1);tB+=r.base;tP+=r.prog;var cls=parseFloat(d)>=0?'up':'down';var s=parseFloat(d)>0?'+':'';fb.innerHTML+='<tr><td>'+r.cat+'</td><td style="font-family:Courier New,monospace;font-size:12px;color:var(--muted);">\u20ac '+fmt(r.base)+'</td><td class="fv">\u20ac '+fmt(r.prog)+'</td><td><span class="cc '+cls+'">'+s+d+'%</span></td></tr>';});
+var td2=((tP-tB)/tB*100).toFixed(1),cls2=parseFloat(td2)>=0?'up':'down',s2=parseFloat(td2)>0?'+':'';
+ff.innerHTML='<tr><td style="text-align:left;color:var(--navy);">TOTAAL PROGNOSE 2026</td><td style="font-family:Courier New,monospace;color:var(--slate);">\u20ac '+fmt(tB)+'</td><td class="fv">\u20ac '+fmt(tP)+'</td><td><span class="cc '+cls2+'">'+s2+td2+'%</span></td></tr>';
+
+new Chart(document.getElementById('cfBarChart'),{type:'bar',data:{labels:['K1 Jan\u2013Mrt','K2 Apr\u2013Jun','K3 Jul\u2013Sep','K4 Okt\u2013Dec'],datasets:[{label:'2022',data:CF_Q['2022'],backgroundColor:'rgba(148,163,184,.75)',borderRadius:3},{label:'2023',data:CF_Q['2023'],backgroundColor:'rgba(96,165,250,.75)',borderRadius:3},{label:'2024',data:CF_Q['2024'],backgroundColor:'rgba(52,211,153,.75)',borderRadius:3},{label:'2025*',data:CF_Q['2025'],backgroundColor:'rgba(245,158,11,.8)',borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:11},padding:10,usePointStyle:true,boxWidth:10}},tooltip:tooltipOpts},scales:scaleOpts}});
+
+new Chart(document.getElementById('cfPctChart'),{type:'bar',data:{labels:['K1','K2','K3','K4'],datasets:[{label:'Huidig gelijkmatig (25%)',data:[25,25,25,25],backgroundColor:'rgba(100,116,139,.2)',borderColor:'rgba(100,116,139,.5)',borderWidth:1.5,borderRadius:4},{label:'Gemiddeld werkelijk (%)',data:[36,24,18,22],backgroundColor:['rgba(37,99,235,.8)','rgba(16,185,129,.8)','rgba(245,158,11,.8)','rgba(139,92,246,.8)'],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:11},padding:10,usePointStyle:true,boxWidth:10}},tooltip:{backgroundColor:'#0B1D35',titleColor:'#fff',bodyColor:'rgba(255,255,255,.85)',padding:10,callbacks:{label:function(ctx){return ' '+ctx.dataset.label+': '+ctx.parsed.y+'%';}}}},scales:{y:{ticks:{callback:function(v){return v+'%';},font:{size:11}},max:45,grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false},ticks:{font:{size:11}}}}}});
+
+new Chart(document.getElementById('gasMonthChart'),{type:'line',data:{labels:MONTHS,datasets:[{label:'2022',data:GAS['2022'],borderColor:'rgba(148,163,184,.6)',tension:.3,pointRadius:3,borderWidth:1.5,fill:false},{label:'2023',data:GAS['2023'],borderColor:'rgba(96,165,250,.7)',tension:.3,pointRadius:3,borderWidth:1.5,fill:false},{label:'2024',data:GAS['2024'],borderColor:'rgba(52,211,153,.7)',tension:.3,pointRadius:3,borderWidth:1.5,fill:false},{label:'2025',data:GAS['2025'],borderColor:'rgba(245,158,11,.8)',tension:.3,pointRadius:3,borderWidth:1.5,fill:false},{label:'Gemiddelde',data:GAS_AVG,borderColor:'#DC2626',borderWidth:2.5,tension:.3,pointBackgroundColor:'#DC2626',pointRadius:5,fill:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:11},padding:10,usePointStyle:true,boxWidth:10}},tooltip:tooltipOpts},scales:scaleOpts}});
+
+new Chart(document.getElementById('balanceChart'),{type:'line',data:{labels:MONTHS,datasets:[{label:'Huidig (4\xd7 \u20ac103.300)',data:balEq,borderColor:'#DC2626',backgroundColor:'rgba(220,38,38,.08)',fill:true,tension:.3,pointRadius:4,borderWidth:2},{label:'Aanbevolen (seizoensgestuurd)',data:balOp,borderColor:'#059669',backgroundColor:'rgba(5,150,105,.08)',fill:true,tension:.3,pointRadius:4,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{font:{size:11.5},padding:12,usePointStyle:true,boxWidth:10}},tooltip:{backgroundColor:'#0B1D35',titleColor:'#fff',bodyColor:'rgba(255,255,255,.85)',padding:10,callbacks:{label:function(ctx){var v=Math.round(ctx.parsed.y);return ' '+ctx.dataset.label+': '+(v<0?'\u2212':'+ ')+'\u20ac'+Math.abs(v).toLocaleString('nl-BE');}}}},scales:{y:{ticks:{callback:function(v){return (v<0?'\u2212':'')+'\u20ac'+Math.abs(Math.round(v/1000))+'K';},font:{size:11}},grid:{color:'rgba(0,0,0,.05)'}},x:{grid:{display:false},ticks:{font:{size:11}}}}}});
+
+var gb=document.getElementById('gasTableBody');
+var gasYrTot=GAS_AVG.reduce(function(a,b){return a+b;},0);
+MONTHS_FULL.forEach(function(m,i){var avg=GAS_AVG[i];gb.innerHTML+='<tr><td style="font-weight:500;">'+m+'</td><td>\u20ac '+fmt(GAS['2022'][i])+'</td><td>\u20ac '+fmt(GAS['2023'][i])+'</td><td>\u20ac '+fmt(GAS['2024'][i])+'</td><td>\u20ac '+fmt(GAS['2025'][i])+'</td><td class="avg-col">\u20ac '+fmt(avg)+'</td><td class="avg-col">'+(avg/gasYrTot*100).toFixed(1)+'%</td></tr>';});
 </script>
+</body>
+</html>
